@@ -32,6 +32,8 @@ document.querySelector("body").appendChild(divAllCards);
 
 //                                              APLICAMOS FOREACH PARA CREAR UNA CARD POR CADA OBJETO DEL ARRAY DATA
 
+let shoppingCart = [];
+
 dataFood.forEach((data) => {
   const divCardContainer = document.createElement("div");
   divCardContainer.style.width = "180px";
@@ -60,47 +62,93 @@ dataFood.forEach((data) => {
   const divCardPrice = document.createElement("div");
   divCardPrice.innerHTML = data.price + "€ ";
   divCardPrice.style.fontSize = "12px";
+  
+  
+  
+  const containerListProduct = document.querySelector(
+    "#ContainerListProduct"
+  );
+
+
 
   const buttonCard = document.createElement("button");
   buttonCard.innerHTML = "Agregar";
   buttonCard.addEventListener("click", () => {
-    const divCardContainer = document.createElement("div");
-    divCardContainer.classList.add("divContainerMiniCard");
 
-    const imgDivCard = document.createElement("img");
-    imgDivCard.src = data.img;
-    imgDivCard.classList.add("miniDivImg");
+    containerListProduct.innerHTML ="";
+    
+    const newObject = {
+      id: data.id,
+      productName: data.productName,
+      img: data.img,
+      price: data.price,
+      cant: 1
+    };
+    
+                                // FUNCION QUE EVITA QUE SE REPITA EL MISMO OBJETO
 
-    const divCardNamePrice = document.createElement("div");
+    function agergarAlCarrito (newObject, shoppingCart) {
+      const encontrado = shoppingCart.reduce((encontrado, item) =>{
+        if (item.id === newObject.id) {
+          item.cant++
+          return true;
+        }
+        return encontrado;;
+      }, false);
+  
+      if (!encontrado) {
+        shoppingCart.push(newObject)
+      }
+  
+      return shoppingCart;
+    }
 
-    const pCardName = document.createElement("p");
-    pCardName.innerHTML = data.productName;
+    agergarAlCarrito(newObject, shoppingCart)
 
-    const pPrice = document.createElement("p");
-    pPrice.innerHTML = data.price + "€ ";
+    shoppingCart.forEach(product => { 
+      
+      const divCardContainer = document.createElement("div");
+      divCardContainer.classList.add("divContainerMiniCard");
+  
+      const imgDivCard = document.createElement("img");
+      imgDivCard.src = product.img;
+      imgDivCard.classList.add("miniDivImg");
+  
+      const divCardNamePrice = document.createElement("div");
+  
+      const pCardName = document.createElement("p");
+      pCardName.innerHTML = product.productName;
+  
+      const pPrice = document.createElement("p");
+      pPrice.innerHTML = product.price + "€ ";
 
-    const buttonMiniCard = document.createElement("button");
-    buttonMiniCard.innerHTML = "X";
-    buttonMiniCard.addEventListener("click", () => {
-      divCardContainer.remove();
+      const quantity = document.createElement("p");
+      pPrice.innerHTML = product.cant;
+
+      
+  
+      const buttonMiniCard = document.createElement("button");
+      buttonMiniCard.innerHTML = "X";
+      buttonMiniCard.addEventListener("click", () => {
+        divCardContainer.remove();
+      });
+      containerListProduct.appendChild(divCardContainer);
+      divCardContainer.appendChild(divCardNamePrice);
+      divCardNamePrice.appendChild(pCardName);
+      divCardNamePrice.appendChild(pPrice);
+      divCardContainer.appendChild(imgDivCard);
+      divCardContainer.appendChild(quantity);
+      divCardNamePrice.appendChild(buttonMiniCard);
+      
+      document
+        .getElementById("clearButton")
+        .addEventListener("click", function () {
+          divCardContainer.remove(divAllCards);
+        });
+    });
     });
 
-    const containerListProduct = document.querySelector(
-      "#ContainerListProduct"
-    );
-    containerListProduct.appendChild(divCardContainer);
-    divCardContainer.appendChild(imgDivCard);
-    divCardContainer.appendChild(divCardNamePrice);
-    divCardNamePrice.appendChild(pCardName);
-    divCardNamePrice.appendChild(pPrice);
-    divCardContainer.appendChild(buttonMiniCard);
 
-    document
-      .getElementById("clearButton")
-      .addEventListener("click", function () {
-        divCardContainer.remove(divAllCards);
-      });
-  });
 
   divAllCards.appendChild(divCardContainer);
   divCardContainer.appendChild(imgDivCard);
@@ -108,6 +156,20 @@ dataFood.forEach((data) => {
   divCardContainer.appendChild(divCardPrice);
   divCardContainer.appendChild(buttonCard);
 });
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
 
 // boton que limpie tdo el div verde
 
@@ -119,17 +181,3 @@ dataFood.forEach((data) => {
 // clearBotton.innerHTML = "CLEAR"
 // clearButtonContainer.appendChild(clearBotton)
 
-/* 
-const carrito = productos.reduce((acumulado, producto) => {
-    const { id, nombre, precio, cantidad } = producto;
-
-    if (acumulado[id]) {
-        acumulado[id].cantidad += cantidad;
-    } else {
-        acumulado[id] = { id, nombre, precio, cantidad };
-    }
-
-    return acumulado;
-}, {});
-
-const resultado = Object.values(carrito); */
